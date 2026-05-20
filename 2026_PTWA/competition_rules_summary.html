@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>國高中組自走車攻防戰與資源爭奪戰規則整理</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --paper: #ffffff;
+      --ink: #1d232b;
+      --muted: #596574;
+      --line: #d9dee7;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --soft: #e9f5f3;
+      --warn: #fff7ed;
+      --danger: #fef2f2;
+      --shadow: 0 14px 34px rgba(17, 24, 39, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.65;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    header {
+      background: #12202a;
+      color: #fff;
+      padding: 34px 20px 28px;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: #a7f3d0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.75rem, 3vw, 2.7rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 14px 0 0;
+      color: #d7dee8;
+      font-size: 1.05rem;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    nav .wrap {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    nav a {
+      flex: 0 0 auto;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.92rem;
+      background: #fff;
+    }
+
+    main {
+      padding: 24px 0 48px;
+    }
+
+    section {
+      margin: 18px 0;
+      padding: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.45rem;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 1.12rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    ul,
+    ol {
+      margin: 8px 0 0 1.4em;
+      padding: 0;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    strong {
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .callout {
+      border-left: 5px solid var(--accent);
+      background: var(--soft);
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin: 14px 0;
+    }
+
+    .warn {
+      border-left-color: var(--accent-2);
+      background: var(--warn);
+    }
+
+    .danger {
+      border-left-color: #dc2626;
+      background: var(--danger);
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 6px 6px 0;
+      padding: 3px 9px;
+      border-radius: 999px;
+      color: #064e3b;
+      background: #d1fae5;
+      font-size: 0.86rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef2f7;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .highlight {
+      background: #f0fdfa;
+      font-weight: 700;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .two-col-list {
+      columns: 2;
+      column-gap: 32px;
+    }
+
+    footer {
+      color: var(--muted);
+      padding: 0 0 36px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 780px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 18px;
+      }
+
+      .two-col-list {
+        columns: 1;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      header,
+      nav,
+      section {
+        box-shadow: none;
+      }
+
+      nav {
+        display: none;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <p class="eyebrow">花蓮縣第七屆太平洋盃 PTWA X 華紙公益全國自走車大賽</p>
+      <h1>國高中組自走車攻防戰與資源爭奪戰規則整理</h1>
+      <p class="subtitle">依據目錄內簡章整理，保留國高中組帶隊老師需要掌握的參賽資格、檢錄重點、共通注意事項、兩日賽程與兩項比賽規則。</p>
+    </div>
+  </header>
+
+  <nav aria-label="頁面導覽">
+    <div class="wrap">
+      <a href="#overview">快速摘要</a>
+      <a href="#schedule">時間表</a>
+      <a href="#common">共通注意事項</a>
+      <a href="#resource">資源爭奪戰</a>
+      <a href="#attack-defense">自走車攻防戰</a>
+      <a href="#comparison">規格對照</a>
+      <a href="#checklist">帶隊檢查</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section id="overview">
+      <h2>快速摘要</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>資源爭奪戰</h3>
+          <p>
+            以機器人搬運球體取得分數。黃球為物資，每顆加分；綠球為有害物質，每顆扣分，可送至對手陣營造成對手扣分。
+          </p>
+          <p>
+            <span class="tag">每隊最多 3 名選手</span>
+            <span class="tag">初賽 2 對 2</span>
+            <span class="tag">決賽 3 對 3</span>
+            <span class="tag">每場 150 秒</span>
+          </p>
+        </div>
+        <div class="card">
+          <h3>自走車攻防戰</h3>
+          <p>
+            以進攻機器人取球、投球得分，防守機器人阻擋對方進攻。得分區分為橘色 1 分、藍色 3 分、紅色 5 分。
+          </p>
+          <p>
+            <span class="tag">每隊最多 2 名選手</span>
+            <span class="tag">初賽 2 對 2</span>
+            <span class="tag">決賽 3 對 3</span>
+            <span class="tag">每場 180 秒</span>
+          </p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <strong>帶隊關鍵：</strong>每位選手同一時段僅限參加一項競賽。若學生跨項報名，務必先檢查國高中組的賽程時段是否錯開。
+      </div>
+    </section>
+
+    <section id="schedule">
+      <h2>時間表</h2>
+      <p>競賽暨頒獎日期為 <strong>115 年 7 月 21 日（二）至 115 年 7 月 22 日（三）</strong>，即 <strong>2026 年 7 月 21 日至 2026 年 7 月 22
+          日</strong>。地點：<strong>花蓮縣立中華國民小學</strong>。</p>
+      <div class="callout">
+        <strong>賽前場地測試：</strong>115 年 7 月 20 日（一）下午 16:00 後。
+      </div>
+
+      <h3>第一天：115 年 7 月 21 日（二）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>時間</th>
+              <th>流程</th>
+              <th>目標項目重點</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>08:30-09:00</td>
+              <td>報到</td>
+              <td>確認隊伍、選手與車輛準備。</td>
+            </tr>
+            <tr>
+              <td>09:00-09:20</td>
+              <td>開幕典禮</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>09:20-09:30</td>
+              <td>競賽檢錄</td>
+              <td>檢錄不合格僅限現場 3 分鐘緊急調整。</td>
+            </tr>
+            <tr class="highlight">
+              <td>09:30-11:30</td>
+              <td>初賽</td>
+              <td>國高中組：自走車攻防戰初賽。</td>
+            </tr>
+            <tr>
+              <td>11:30-12:30</td>
+              <td>競賽直播</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>12:30-13:00</td>
+              <td>中午休息</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>13:00-13:10</td>
+              <td>競賽檢錄</td>
+              <td>檢錄後車輛需擺放於檢錄桌，競賽時才能取用。</td>
+            </tr>
+            <tr class="highlight">
+              <td>13:10-15:10</td>
+              <td>初賽</td>
+              <td>國高中組：資源爭奪戰初賽。</td>
+            </tr>
+            <tr>
+              <td>15:10-16:30</td>
+              <td>競賽直播</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>第二天：115 年 7 月 22 日（三）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>時間</th>
+              <th>流程</th>
+              <th>目標項目重點</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>08:20-08:40</td>
+              <td>報到</td>
+              <td>確認決賽聯隊與車輛狀態。</td>
+            </tr>
+            <tr>
+              <td>08:40-09:00</td>
+              <td>競賽檢錄</td>
+              <td>檢錄不合格僅限現場 3 分鐘緊急調整。</td>
+            </tr>
+            <tr class="highlight">
+              <td>09:00-11:00</td>
+              <td>決賽</td>
+              <td>國高中組：自走車攻防戰決賽。</td>
+            </tr>
+            <tr>
+              <td>11:00-12:00</td>
+              <td>競賽直播</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>12:00-13:00</td>
+              <td>中午休息</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>13:00-13:10</td>
+              <td>競賽檢錄</td>
+              <td>檢錄後車輛需擺放於檢錄桌，競賽時才能取用。</td>
+            </tr>
+            <tr class="highlight">
+              <td>13:10-15:10</td>
+              <td>決賽</td>
+              <td>國高中組：資源爭奪戰決賽。</td>
+            </tr>
+            <tr>
+              <td>15:10-16:30</td>
+              <td>競賽直播</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>16:30-17:00</td>
+              <td>頒獎</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="common">
+      <h2>共通注意事項</h2>
+      <h3>參加與報名</h3>
+      <ul class="two-col-list">
+        <li>本版僅整理國高中組。</li>
+        <li>參賽選手須為 114 學年度在籍學生。</li>
+        <li>可跨校組隊。</li>
+        <li>每位指導老師可指導 1 隊以上。</li>
+        <li>每校在國高中組中，每個競賽項目最多報名 2 隊。</li>
+        <li>兩項競賽報名隊伍總數上限皆為 80 隊，額滿為止。</li>
+        <li>報名平台：花蓮縣競賽平台 https://cptt.hlc.edu.tw。</li>
+        <li>報名時間：115 年 6 月 10 日（三）至 6 月 24 日（三）。已線上報名但未完成上傳者，可開放至 6 月 29 日（一）。</li>
+      </ul>
+
+      <h3>檢錄與現場調整</h3>
+      <ul>
+        <li>現場劃分三個獨立競賽區，同時進行檢錄與比賽。</li>
+        <li>檢錄不合格者，僅限現場 <strong>3 分鐘</strong>緊急調整；逾時視同放棄該場賽事或淘汰。</li>
+        <li>檢錄後車輛需擺放於檢錄桌，競賽時才能取用。</li>
+        <li>比賽現場不提供改裝材料與工具；需改裝或調整者，參賽隊伍應自行事前準備。</li>
+        <li>競賽中若機器人損壞，參賽隊伍可於非競賽時間自行維修；主辦單位不提供工具、材料、維修費或相關支援。</li>
+      </ul>
+
+      <h3>共通機器人規格</h3>
+      <ul>
+        <li>機器人含電池與所有配件，總重量須為 <strong>2000 公克（含）以下</strong>。</li>
+        <li>移動用馬達僅限 <strong>TT 馬達</strong>或 <strong>N20 直流馬達</strong>，總數最多 4 顆。</li>
+        <li>舵機限制：扭力 13kg-cm（含）以下，最多 2 顆。資源爭奪戰為格鬥部件，攻防戰為投射部件使用。</li>
+        <li>可使用麥克納姆輪、全向輪等全方向移動輪組。</li>
+        <li>控制方式可採遙控模式或自動模式；攻防戰依角色另有防守與進攻限制。</li>
+      </ul>
+
+      <div class="callout danger">
+        <strong>失格風險：</strong>不得使用公開販售之整車、整機成品車或完整套裝車體；設計與材料不得可能損傷、污染或破壞場地，例如尖銳金屬、易掉屑材料、滲漏液體或會黏附地面的物質。
+      </div>
+
+      <h3>馬達樣式爭議預防</h3>
+      <p>簡章明訂，因歷年常就馬達樣式產生認定爭議，本次競賽僅允許 TT 馬達與 N20
+        直流馬達，且外觀與規格須符合規章示意圖。若使用非上述兩種樣式，或外觀、結構明顯不符，主辦單位得要求現場更換；無法於指定時間內完成者，不得參賽或取消成績。馬達樣式認定以現場檢錄與裁判判定為準，爭議以主辦單位最終裁決為準。
+      </p>
+
+      <h3>獎勵</h3>
+      <p>國高中組兩項競賽皆設金牌 1 名、銀牌 1 名、銅牌 2 名、佳作 4 名。金、銀、銅牌除花蓮縣政府獎狀外，每隊分別有 1,500 元、800 元、500 元獎金或等值禮券；佳作頒發獎狀。</p>
+    </section>
+
+    <section id="resource">
+      <h2>資源爭奪戰規則</h2>
+      <h3>隊伍與賽制</h3>
+      <ul>
+        <li>每隊可設指導老師 1 人。</li>
+        <li>每隊選手人數至多 3 名。</li>
+        <li>初賽採 2 對 2 對戰、單敗淘汰制，選出 16 強。</li>
+        <li>決賽由主辦單位抽籤將兩隊配成一組，兩隊合作組成 1 個聯隊。</li>
+        <li>決賽採 3 對 3 對戰、雙敗淘汰制。</li>
+      </ul>
+
+      <h3>機器人限制</h3>
+      <ul>
+        <li>全展開狀態外框尺寸不得超過 <strong>長 25 公分 × 寬 25 公分</strong>，高度不限。</li>
+        <li>格鬥部件、武器、舉臂、推撥等非必要部件，動力僅限 13kg-cm（含）以下舵機，最多 2 顆。</li>
+        <li>禁止持球或鎖死結構。控球機構必須為開放式，不得有倒鉤；包覆不得超過半圓，開口角度不得小於 180 度；球進入控球範圍後，須能自然離開。</li>
+        <li>經裁判認定具有明顯阻擋或鎖死球體意圖者，視為違反禁止事項。</li>
+      </ul>
+
+      <h3>競賽場地與方式</h3>
+      <ul>
+        <li>場地尺寸：<strong>210cm × 360cm</strong>。</li>
+        <li>球材質：霧化抽獎球，彈力低。</li>
+        <li>初賽對戰組合以抽籤產生；決賽先抽籤組成聯隊，再抽籤產生對戰組合。</li>
+        <li>起始位置為示意圖中的黃色區域。</li>
+        <li>雙方完成就位並確認準備完成後，由裁判宣告開始並計時；每場 <strong>150 秒</strong>。</li>
+        <li>競賽開始後，場中落球台以隨機方式落球。</li>
+        <li>若球體掉落場外，由工作人員放回落球台並重新隨機落球。</li>
+      </ul>
+
+      <h3>球種分數與勝負</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>階段</th>
+              <th>黃球數量</th>
+              <th>黃球分數</th>
+              <th>綠球數量</th>
+              <th>綠球分數</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>初賽</td>
+              <td>11 顆</td>
+              <td>每顆 +1 分</td>
+              <td>2 顆</td>
+              <td>每顆 -2 分</td>
+            </tr>
+            <tr>
+              <td>決賽</td>
+              <td>11 顆</td>
+              <td>每顆 +1 分</td>
+              <td>4 顆</td>
+              <td>每顆 -2 分</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>選手可將黃球運回己方陣營取得分數。</li>
+        <li>選手可將綠球送至對手陣營，使對手產生扣分。</li>
+        <li>比賽結束後，依各陣營內黃球與綠球統計計分，分數較高者獲勝。</li>
+      </ul>
+    </section>
+
+    <section id="attack-defense">
+      <h2>自走車攻防戰規則</h2>
+      <h3>隊伍與賽制</h3>
+      <ul>
+        <li>每隊可設指導老師 1 人。</li>
+        <li>每隊選手人數至多 2 名。</li>
+        <li>初賽採 2 對 2 對戰，每隊上場機器人共 2 台，須包含防守機器人 1 台與攻擊機器人 1 台。</li>
+        <li>初賽採單敗淘汰制，決出 8 強晉級決賽。</li>
+        <li>決賽 8 強隊伍須邀請非本校且已於本競賽遭淘汰之隊伍，兩隊合作組成 1 個聯隊。</li>
+        <li>決賽採 3 對 3 對戰，聯隊上場機器人共 3 台，至少包含防守機器人 1 台與攻擊機器人 1 台。</li>
+        <li>決賽採雙敗淘汰制。</li>
+      </ul>
+
+      <h3>機器人限制</h3>
+      <ul>
+        <li>防守車尺寸：全展開狀態不得超過 <strong>長 35 公分 × 寬 25 公分</strong>，高度不限。</li>
+        <li>進攻車尺寸：全展開狀態不得超過 <strong>長 35 公分 × 寬 25 公分 × 高 25 公分</strong>，其中 25 公分為取球高度限制。</li>
+        <li>投射部件、發射、舉臂、推撥等部件，動力僅限 13kg-cm（含）以下舵機，最多 2 顆。</li>
+        <li>取球部位高度不得超過取球機高度 25 公分。</li>
+        <li>競賽進行期間，選手不得以手部、身體或其他方式觸碰取球機。</li>
+        <li>若競賽期間因碰撞取球機造成損壞或無法取球，主辦單位不負維修及回復責任。</li>
+      </ul>
+
+      <h3>競賽場地與角色限制</h3>
+      <ul>
+        <li>場地尺寸：<strong>150cm × 420cm</strong>。</li>
+        <li>球材質：霧化抽獎球，彈力低。</li>
+        <li>防守機器人可採智能或手動控制，車體上方可架設防守裝置，例如板子或網子；若有張開裝置，最大展開寬度不得超過 35cm，高度不限。</li>
+        <li>進攻機器人可採智能或手動控制，取球高度不得高於 25cm。</li>
+        <li>防守機器人只能在示意圖中的黑色區域行動。</li>
+        <li>進攻機器人由示意圖中的棕色區域移動，不得進入黑色區域或對手區域。</li>
+      </ul>
+
+      <h3>比賽方式、得分與勝負</h3>
+      <ul>
+        <li>雙方完成就位並確認準備完成後，由裁判宣告開始並計時；每場 <strong>180 秒</strong>。</li>
+        <li>競賽開始後，進攻機器人可至任一落球台取球。</li>
+        <li>比賽進行中，球體一旦落地，不得直接拾取或繼續使用；需返回落球台重新取球後，方可再進攻。</li>
+        <li>進攻時須於堡壘外圍將球投入對方堡壘得分區，不得以機器人衝撞對方機器人或堡壘。</li>
+        <li>除防守機器人之防守行為外，進攻機器人不得主動攻擊對手；經裁判認定主動攻擊者，該進攻機器人將被驅逐出場外。</li>
+      </ul>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>得分區域</th>
+              <th>分數</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>橘色區域</td>
+              <td>1 分</td>
+            </tr>
+            <tr>
+              <td>藍色區域</td>
+              <td>3 分</td>
+            </tr>
+            <tr>
+              <td>紅色區域</td>
+              <td>5 分</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>競賽時間結束後依統計結果計分，分數較高者獲勝。</li>
+        <li>若雙方分數相同，延長比賽至任一方先得分，即判定該方獲勝。</li>
+      </ul>
+    </section>
+
+    <section id="comparison">
+      <h2>兩項規格對照</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>資源爭奪戰</th>
+              <th>自走車攻防戰</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>每隊選手</td>
+              <td>至多 3 名</td>
+              <td>至多 2 名</td>
+            </tr>
+            <tr>
+              <td>初賽</td>
+              <td>2 對 2，單敗淘汰，選出 16 強</td>
+              <td>2 對 2，單敗淘汰，決出 8 強</td>
+            </tr>
+            <tr>
+              <td>決賽</td>
+              <td>抽籤配對成聯隊，3 對 3，雙敗淘汰</td>
+              <td>8 強邀請非本校且已淘汰隊伍成聯隊，3 對 3，雙敗淘汰</td>
+            </tr>
+            <tr>
+              <td>重量</td>
+              <td>2000g（含）以下</td>
+              <td>2000g（含）以下</td>
+            </tr>
+            <tr>
+              <td>尺寸</td>
+              <td>長 25cm × 寬 25cm，高度不限</td>
+              <td>防守車長 35cm × 寬 25cm，高度不限；進攻車長 35cm × 寬 25cm × 高 25cm</td>
+            </tr>
+            <tr>
+              <td>移動馬達</td>
+              <td>TT 或 N20，最多 4 顆</td>
+              <td>TT 或 N20，最多 4 顆</td>
+            </tr>
+            <tr>
+              <td>舵機</td>
+              <td>13kg-cm 以下，最多 2 顆</td>
+              <td>13kg-cm 以下，最多 2 顆</td>
+            </tr>
+            <tr>
+              <td>場地</td>
+              <td>210cm × 360cm</td>
+              <td>150cm × 420cm</td>
+            </tr>
+            <tr>
+              <td>時間</td>
+              <td>150 秒</td>
+              <td>180 秒</td>
+            </tr>
+            <tr>
+              <td>核心得分</td>
+              <td>黃球 +1，綠球 -2，依陣營內球數統計</td>
+              <td>投進橘色 1 分、藍色 3 分、紅色 5 分</td>
+            </tr>
+            <tr>
+              <td>主要失格或處罰風險</td>
+              <td>持球、鎖死球體、違反車體或馬達規格</td>
+              <td>進攻車主動攻擊、衝撞堡壘或取球機、違反車體或馬達規格</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="checklist">
+      <h2>帶隊檢查清單</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>賽前確認</h3>
+          <ul>
+            <li>報名表已下載、核章、掃描並上傳平台。</li>
+            <li>同一學生跨項報名時，競賽時段已錯開。</li>
+            <li>確認每校在國高中組中，每個競賽項目未超過 2 隊。</li>
+            <li>確認隊員符合 114 學年度在籍學生資格。</li>
+            <li>準備現場可能需要的工具、材料、備品與電池。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>檢錄前確認</h3>
+          <ul>
+            <li>車重含電池與配件不超過 2000g。</li>
+            <li>尺寸符合所參加項目與角色限制。</li>
+            <li>移動馬達僅使用 TT 或 N20，總數最多 4 顆。</li>
+            <li>舵機扭力 13kg-cm 以下，最多 2 顆。</li>
+            <li>車體沒有尖銳、掉屑、滲漏或黏附地面的材料。</li>
+            <li>非公開販售整車、整機成品車或完整套裝車體。</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small">資料來源：花蓮縣第七屆太平洋盃 PTWA X 華紙公益全國自走車大賽_0515.pdf。本文為帶隊整理版，現場判定與規則解釋仍以主辦單位公告及裁判認定為準。</p>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    製作日期：2026-05-19
+  </footer>
+</body>
+
+</html>
